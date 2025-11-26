@@ -1,6 +1,6 @@
 # 🚀 SuperTest Express Demo — Fast, In-Memory API Testing
 
-![CI Badge](https://github.com/mvsaran/Playwright-API-Testing/actions/workflows/ci.yml/badge.svg)
+
 ![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 ![Author](https://img.shields.io/badge/Author-Saran%20Kumar-blueviolet)
 ![SuperTest](https://img.shields.io/badge/API%20Testing-SuperTest-blue)
