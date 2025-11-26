@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
+  <style>
+    .title { font: 600 18px 'Segoe UI', Roboto, Arial; fill: #0b5cff }
+    .lbl { font: 500 13px 'Segoe UI', Roboto, Arial; fill: #222 }
+    .box { fill: #f7fbff; stroke: #9fc3ff; stroke-width: 2; rx: 8; }
+    .small { font: 400 12px 'Segoe UI', Roboto, Arial; fill: #444 }
+    .arrow { stroke: #6b7cff; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6b7cff" />
+    </marker>
+  </defs>
+
+  <text x="20" y="28" class="title">SuperTest In-Memory Test Architecture</text>
+
+  <!-- Tests -->
+  <rect x="20" y="60" width="220" height="80" class="box" />
+  <text x="30" y="88" class="lbl">Tests (Mocha + Chai)</text>
+  <text x="30" y="106" class="small">test/users.test.js</text>
+  <text x="30" y="124" class="small">request(app) — SuperTest</text>
+
+  <!-- request(app) arrow -->
+  <path d="M240 100 L320 100" class="arrow" />
+
+  <!-- Express app -->
+  <rect x="320" y="40" width="240" height="140" class="box" />
+  <text x="330" y="72" class="lbl">Express app</text>
+  <text x="330" y="92" class="small">app.js (exported, no listen)</text>
+  <text x="330" y="110" class="small">routes/users.js</text>
+  <text x="330" y="128" class="small">controllers/usersController.js</text>
+
+  <!-- auth middleware -->
+  <rect x="580" y="40" width="260" height="60" class="box" />
+  <text x="590" y="72" class="lbl">Auth Middleware</text>
+  <text x="590" y="92" class="small">lib/auth.js (verifyToken)</text>
+
+  <path d="M560 100 L580 100" class="arrow" />
+
+  <!-- In-memory store -->
+  <rect x="580" y="120" width="260" height="60" class="box" />
+  <text x="590" y="148" class="lbl">In-memory Store</text>
+  <text x="590" y="166" class="small">usersStore (Map)</text>
+
+  <!-- arrows from app to auth/store -->
+  <path d="M560 70 L580 70" class="arrow" />
+  <path d="M560 150 L580 150" class="arrow" />
+
+  <!-- Note -->
+  <text x="20" y="220" class="small">Flow: Tests call request(app) → Express routing → controllers (+auth) → usersStore</text>
+
+  <!-- Legend -->
+  <rect x="20" y="240" width="860" height="100" fill="#fff8e6" stroke="#ffd78a" rx="6" />
+  <text x="36" y="268" class="lbl">Legend</text>
+  <text x="36" y="288" class="small">• SuperTest uses the exported `app` directly — no network port required.</text>
+  <text x="36" y="306" class="small">• Auth middleware verifies JWT signed with `JWT_SECRET`.</text>
+  <text x="36" y="324" class="small">• `usersStore` is exported so tests can clear state between runs.</text>
+
+</svg>
