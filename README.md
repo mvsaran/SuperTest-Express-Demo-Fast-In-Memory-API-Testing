@@ -1,127 +1,211 @@
-# SuperTest Express Demo
+# 🚀 SuperTest Express Demo — Fast, In-Memory API Testing
 
-![CI Badge](https://github.com/mvsaran/Playwright-API-Testing/actions/workflows/ci.yml/badge.svg) ![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![CI Badge](https://github.com/mvsaran/Playwright-API-Testing/actions/workflows/ci.yml/badge.svg)
+![Node >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![Author](https://img.shields.io/badge/Author-Saran%20Kumar-blueviolet)
+![SuperTest](https://img.shields.io/badge/API%20Testing-SuperTest-blue)
+![Mocha](https://img.shields.io/badge/Test%20Runner-Mocha-yellow)
 
-Small Express API with SuperTest + Mocha + Chai tests that run in-memory (tests import the app directly — no network port required).
+---
 
-Quick Install
+## ✨ What is this project?
 
-```powershell
+A **tiny Express API** tested using **SuperTest + Mocha + Chai** — completely **in-memory**, meaning:
+
+⚡ **No server is started**  
+⚡ **No port is required**  
+⚡ **Tests run extremely fast & stable**  
+⚡ **Ideal for CI pipelines**
+
+This makes backend testing **super lightweight, super fast, and super reliable**.
+
+---
+
+# ⚡ Quick Setup
+
+```bash
 npm ci
 cp .env.example .env
-```
-
-Run tests
-
-```powershell
 npm test
 ```
 
-Run dev server (manual testing)
+Run dev server manually:
 
-```powershell
+```bash
 npm run dev
 # or
 npm start
 ```
-## Architecture Diagram
 
-The diagram below shows how SuperTest interacts with the exported Express `app`, the routes/controllers, the auth middleware, and the in-memory store used in tests.
+---
+
+# 🧱 Architecture — Visual & Simple
+
+### 🧩 How SuperTest connects with Express internally (No Server Needed)
+
+Below is the project architecture diagram (visual) and a screenshot of the project folder structure.
+
+**Architecture Diagram (SVG)**  
 
 ![Architecture diagram](./assets/architecture.svg)
 
+**Project Structure Screenshot**  
 
-**How SuperTest is used here**
+<details>
+<summary>Click to expand the screenshot of the project structure</summary>
 
-- The tests import the Express app exported from `app.js` (no `listen()` call) and pass it to SuperTest via `request(app)`.
-- SuperTest invokes the Express routing and middleware stack directly in-memory — there is no network I/O or port binding during tests.
-- This makes tests fast, deterministic, and free from port conflicts.
+![Project Structure Screenshot](./assets/project-structure.png)
 
-Step-by-step: how this project implements SuperTest API tests
-
-1. Export the app (no listen): `app.js` exports `app` and the `usersStore` Map so tests can import and manipulate state.
-	- See `app.js` (root handler and mounting): `app.get('/', ...)` and `app.use('/', createUsersRouter(usersStore))`.
-2. Implement routes and controllers separately:
-	- `routes/users.js` wires endpoints to controller factories.
-	- `controllers/usersController.js` implements `register`, `login`, `list`, and `getById` handlers.
-3. Minimal auth helper: `lib/auth.js` provides `signToken`, `verifyToken` and `authMiddleware` that protects endpoints by verifying `Authorization: Bearer <token>`.
-4. Tests import `app` and `usersStore` and use `supertest` calls like `request(app).post('/api/register').send(...)` to exercise handlers.
-	- Tests clear the `usersStore` in `beforeEach`/`afterEach` to ensure isolation.
-5. For protected endpoints tests obtain a JWT via `POST /api/login` and then call protected endpoints with `.set('Authorization', `Bearer ${token}`)`.
-
-Architecture (simple sample)
+</details>
 
 ```
-SuperTest (tests) --> request(app) --> Express app (app.js)
-													|
-													+--> routes/users.js
-																 |
-																 +--> controllers/usersController.js
-																 |
-																 +--> lib/auth.js (middleware)
-													|
-													+--> in-memory store (usersStore: Map)
+ ┌─────────────────────────────────────────────────────────┐
+ │                     SuperTest (Tests)                   │
+ │     request(app) → directly calls Express handlers      │
+ └───────────────▲───────────────────────────────▲────────┘
+                 │                               │
+                 │ in-memory calls               │ no HTTP
+                 │                               │
+       ┌─────────┴───────────────────────────────┴─────────┐
+       │                     Express App                     │
+       │               app.js (no listen())                  │
+       │                                                     │
+       │  Routes → Controllers → Auth Middleware → Store     │
+       └───────────▲──────────────▲────────────▲────────────┘
+                   │              │            │
+             users.js       usersController.js   auth.js
 ```
 
-Folder structure
+---
+
+# 🆚 SuperTest vs Normal API Testing
+
+## 🤖 SuperTest API Testing (used here)
+
+| Feature | Description |
+|--------|-------------|
+| 🚫 No Server Needed | Tests directly call `request(app)` |
+| ⚡ Super Fast | No HTTP/network overhead |
+| 🧪 Perfect for Integration Tests | Middleware, routing, controllers |
+| 🔁 Stable in CI | No port conflicts / flaky networking |
+| 💻 In-memory execution | Same process as test runner |
+
+## 🌐 Normal API Testing (Cypress, Postman, Axios, curl)
+
+| Feature | Description |
+|--------|-------------|
+| 🟢 Requires a Running Server | Must listen on `http://localhost:3000` |
+| 🐢 Slower | Real HTTP calls |
+| 🌍 Realistic Network Behavior | Great for end-to-end testing |
+| 🔌 Needed for UI automation | Cypress / Postman collections |
+
+---
+
+# 🎯 When Should You Use Which?
+
+### ✔ Use **SuperTest** when:
+- You want **fast**, **in-memory**, **code-level** API tests  
+- You are testing **routes**, **controllers**, **middleware**, **auth**, **validation**  
+- You want **stable CI pipelines**  
+- You do **not** want to deal with ports or server startup
+
+### ✔ Use **Normal / Network API Tests** when:
+- Testing a **deployed environment** (QA / UAT / Prod)  
+- Testing **CORS**, **TLS**, **load balancers**, **reverse proxies**  
+- Testing **frontend → backend API calls**  
+- Doing **end-to-end (E2E)** with UI + API  
+
+---
+
+# 🏗 Project Architecture Diagram (High-Level)
+
+```
+┌──────────────┐       ┌─────────────────────┐
+│ Developer PC │       │   GitHub Actions    │
+└──────┬───────┘       └────────┬────────────┘
+       │                        │
+       │ Run tests locally      │ CI runs on PR
+       ▼                        ▼
+┌────────────────────────┐   ┌─────────────────────────┐
+│ SuperTest (Mocha)      │   │ Cypress (optional E2E)  │
+│ - In-memory API tests  │   │ - Runs on real server   │
+│ - No HTTP network      │   │ - UI + HTTP flows       │
+└─────────┬──────────────┘   └──────────┬──────────────┘
+          │                               │
+          ▼                               ▼
+   Express App (app.js)                Test Server
+   Routes / Controllers                (npm start)
+   Auth / In-memory Store
+```
+
+---
+
+# 🗂 Folder Structure
 
 ```
 /
 ├─ package.json
 ├─ .env.example
 ├─ README.md
-├─ server.js           # starts the app (uses app.listen)
-├─ app.js              # exports Express `app` and `usersStore` (no listen)
+├─ server.js
+├─ app.js
 ├─ routes/
-|  └─ users.js         # route wiring (factory accepting store)
+│  └─ users.js
 ├─ controllers/
-|  └─ usersController.js
+│  └─ usersController.js
 ├─ lib/
-|  └─ auth.js          # jwt helpers + middleware
+│  └─ auth.js
 ├─ test/
-|  └─ users.test.js    # SuperTest + Mocha + Chai tests (in-memory)
+│  └─ users.test.js
 └─ .github/workflows/ci.yml
 ```
 
-Tests involved (what each test does)
+---
 
-- GET `/` — basic health check: `request(app).get('/')` calls the root handler in `app.js`.
-- POST `/api/register` — creates a user in `usersStore`; test calls `request(app).post('/api/register').send(...)` and asserts `201` + returned `id`.
-- POST `/api/login` — returns JWT for existing users; test gets token via `request(app).post('/api/login')`.
-- GET `/api/users` (protected) — test checks missing token returns `401 { error: 'no_token' }`, and with token returns `200 { data: [...] }`.
-- GET `/api/users/:id` — test for `404` when id not found and `200` for valid id using a manually signed token.
+# 🧪 What Tests Cover
 
-SuperTest (in-memory) vs Normal API tests (network)
+✔ GET `/` — health check  
+✔ POST `/api/register` — create user  
+✔ POST `/api/login` — login & return token  
+✔ GET `/api/users` — protected route  
+✔ GET `/api/users/:id` — valid + invalid id tests  
+✔ Manual token signing test  
+✔ Full auth + routing + controller flow  
+✔ Fully isolated using in-memory store  
 
-- SuperTest in-memory:
-  - Runs against the `app` instance directly: `request(app)`.
-  - No TCP/HTTP listening required — faster and less flaky.
-  - Easier to run in CI without port allocation.
-  - Tests exercise real middleware and routing stack, including auth middleware.
+---
 
-- Normal API tests (network/black-box):
-  - Run against a running server (e.g., `http://localhost:3000`).
-  - Useful for end-to-end testing with real network behavior, load balancers, or reverse proxies.
-  - Slower, can be flaky due to networking and port conflicts, and requires start/stop orchestration.
+# 🧠 Key Idea Behind SuperTest
 
-When to use which:
+SuperTest directly calls:
 
-- Use SuperTest in-memory tests for fast unit/integration tests that exercise routing and middleware.
-- Use full-network tests for end-to-end scenarios where the network, TLS, or external infra matters.
+```js
+request(app)
+```
 
-Notes & tips
+Meaning:  
+- No network  
+- No ports  
+- No server startup  
+- No flakiness  
 
-- Keep `app.js` free of `app.listen()` so tests can import it safely.
-- Export any in-memory stores you need to reset between tests (here `usersStore` is exported).
-- Use deterministic secrets in test env (we set `JWT_SECRET` in tests) so tokens are verifiable.
-- Use `beforeEach`/`afterEach` to isolate state between tests.
+---
 
-Commands
+# 🔧 Commands
 
-```powershell
+```bash
 npm ci
 cp .env.example .env
 npm test
+npm run dev
 ```
 
-If you want, I can add a diagram (SVG/PNG) for architecture or expand the README with badges and a CI status badge. Let me know which embellishments you'd like.
+---
+
+# 👨‍💻 Author
+
+**👤 Saran Kumar**  
+💼 SDET | Automation Engineer 
+🌐 Passionate about designing clean, fast, scalable test frameworks
+
+---
